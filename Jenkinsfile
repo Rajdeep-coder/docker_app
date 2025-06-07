@@ -14,6 +14,13 @@ pipeline {
       }
     }
 
+    stage('Debug Workspace') {
+      steps {
+        sh 'pwd'
+        sh 'ls -la'
+      }
+    }
+
     stage('Build and Start Containers') {
       steps {
         dir('src') {
@@ -26,7 +33,6 @@ pipeline {
     stage('Run Specs') {
       steps {
         dir('src') {
-          sh 'docker-compose run --rm app ls -la /app'  // debug mounts
           sh 'docker-compose run --rm app bundle exec rspec'
         }
       }
