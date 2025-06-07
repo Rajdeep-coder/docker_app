@@ -43,7 +43,10 @@ pipeline {
         dir(env.SRC_DIR) {
           sh '''
             echo "Listing /app inside container:"
-            docker-compose run --rm app ls -la /app
+            echo "Building containers..."
+            docker-compose build
+            echo "Running specs directly..."
+            docker-compose run --rm app bundle exec rspec
           '''
         }
       }
