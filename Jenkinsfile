@@ -15,7 +15,8 @@ pipeline {
         dir(env.SRC_DIR) {
           checkout scm
           script {
-            echo "GIT_COMMIT = ${env.GIT_COMMIT}"
+            env.GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+            echo "GIT_COMMIT set to: ${env.GIT_COMMIT}"
           }
         }
       }
