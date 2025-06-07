@@ -73,6 +73,14 @@ pipeline {
   }
 
   post {
+    success {
+      githubNotify context: 'Jenkins CI', status: 'SUCCESS', description: 'Build passed'
+    }
+  
+    failure {
+      githubNotify context: 'Jenkins CI', status: 'FAILURE', description: 'Build failed'
+    }
+
     always {
       echo 'Cleaning up containers...'
       dir('src') {
