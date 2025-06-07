@@ -65,7 +65,7 @@ pipeline {
         dir(env.SRC_DIR) {
           sh '''
             echo "Running specs..."
-            docker-compose run --rm app bundle exec rspec
+            docker-compose run --rm -v "$PWD:/app" app bundle exec rspec
           '''
         }
       }
