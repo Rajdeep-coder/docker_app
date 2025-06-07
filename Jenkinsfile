@@ -34,8 +34,9 @@ pipeline {
       steps {
         dir('src') {
           sh '''
-            export APP_PATH="$PWD"
-            docker-compose run --rm -v "$APP_PATH:/app" app bundle exec rspec
+            echo "PWD: $PWD"
+            ls -l "$PWD"
+            docker-compose run --rm -v "$PWD:/app" app sh -c "ls -l /app && bundle exec rspec"
           '''
         }
       }
