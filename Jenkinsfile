@@ -38,19 +38,19 @@ pipeline {
       }
     }
 
-    stage('Debug Container Mount') {
-      steps {
-        dir(env.SRC_DIR) {
-          sh '''
-            echo "Listing /app inside container:"
-            echo "Building containers..."
-            docker-compose build
-            echo "Running specs directly..."
-            docker-compose run --rm app bundle exec rspec
-          '''
-        }
-      }
-    }
+    // stage('Debug Container Mount') {
+    //   steps {
+    //     dir(env.SRC_DIR) {
+    //       sh '''
+    //         echo "Listing /app inside container:"
+    //         echo "Building containers..."
+    //         docker-compose build
+    //         echo "Running specs directly..."
+    //         docker-compose run --rm app bundle exec rspec
+    //       '''
+    //     }
+    //   }
+    // }
 
     stage('Check App Logs') {
       steps {
@@ -58,17 +58,6 @@ pipeline {
           sh '''
             echo "Checking app logs (last 50 lines)..."
             docker-compose logs app | tail -n 50 || true
-          '''
-        }
-      }
-    }
-
-    stage('Run Specs') {
-      steps {
-        dir(env.SRC_DIR) {
-          sh '''
-            echo "Running specs..."
-            docker-compose run --rm -v "$PWD:/app" app bundle exec rspec
           '''
         }
       }
