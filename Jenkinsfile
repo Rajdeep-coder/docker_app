@@ -26,8 +26,7 @@ pipeline {
     stage('Run Specs') {
       steps {
         dir('src') {
-          sh 'docker-compose build'
-          sh 'docker-compose up -d'
+          sh 'docker-compose run --rm app ls -la /app'  // debug mounts
           sh 'docker-compose run --rm app bundle exec rspec'
         }
       }
