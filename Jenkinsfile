@@ -33,11 +33,11 @@ pipeline {
     stage('Run Specs') {
       steps {
         dir('src') {
-          sh '''
-            echo "PWD: $PWD"
-            ls -l "$PWD"
-            docker-compose run --rm -v "$PWD:/app" app sh -c "ls -l /app && bundle exec rspec"
-          '''
+          sh """
+            echo "PWD: \$PWD"
+            ls -l "\$PWD"
+            docker-compose run --rm -v "\$PWD:/app" app sh -c "ls -l /app && bundle exec rspec"
+          """
         }
       }
     }
