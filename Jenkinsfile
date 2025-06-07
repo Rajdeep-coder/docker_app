@@ -33,11 +33,13 @@ pipeline {
     stage('Run Specs') {
       steps {
         dir('src') {
-          sh """
-            echo "PWD: \$PWD"
-            ls -l "\$PWD"
-            docker-compose run --rm -v "\$PWD:/app" app sh -c "ls -l /app && bundle exec rspec"
-          """
+          sh '''
+            docker-compose up -d db redis app
+            CONTAINER=$(docker-compose ps -q app)
+            echo "Running specs in container: $CONTAINER"
+            docker exec $CONTAINER bundle exec rspec
+            docker-compose down
+          '''
         }
       }
     }
