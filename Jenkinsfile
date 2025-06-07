@@ -72,13 +72,34 @@ pipeline {
     }
   }
 
+  environment {
+    GITHUB_REPO = 'docker_app'
+    GITHUB_ACCOUNT = 'Rajdeep-coder'
+    GITHUB_CREDENTIALS_ID = 'github-token'  // replace with your Jenkins GitHub PAT credential ID
+  }
+
   post {
     success {
-      githubNotify context: 'Jenkins CI', status: 'SUCCESS', description: 'Build passed'
+      githubNotify(
+        context: 'CI',
+        status: 'SUCCESS',
+        description: 'Build passed',
+        repo: env.GITHUB_REPO,
+        account: env.GITHUB_ACCOUNT,
+        credentialsId: env.GITHUB_CREDENTIALS_ID,
+        sha: env.GIT_COMMIT
+      )
     }
-  
     failure {
-      githubNotify context: 'Jenkins CI', status: 'FAILURE', description: 'Build failed'
+      githubNotify(
+        context: 'CI',
+        status: 'FAILURE',
+        description: 'Build failed',
+        repo: env.GITHUB_REPO,
+        account: env.GITHUB_ACCOUNT,
+        credentialsId: env.GITHUB_CREDENTIALS_ID,
+        sha: env.GIT_COMMIT
+      )
     }
 
     always {
