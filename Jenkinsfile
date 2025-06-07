@@ -77,28 +77,15 @@ pipeline {
   }
 
   post {
-    success {
-      githubNotify(
-        context: 'CI',
-        status: 'SUCCESS',
-        description: 'Build passed',
-        repo: 'docker_app',
-        account: 'Rajdeep-coder',
-        credentialsId: 'github-token',
-        sha: "${env.GIT_COMMIT}"
-      )
-    }
-    failure {
-      githubNotify(
-        context: 'CI',
-        status: 'FAILURE',
-        description: 'Build failed',
-        repo: 'docker_app',
-        account: 'Rajdeep-coder',
-        credentialsId: 'github-token',
-        sha: "${env.GIT_COMMIT}"
-      )
-    }
+    githubNotify(
+      context: 'CI',
+      status: currentBuild.currentResult, // SUCCESS or FAILURE
+      description: "Build ${currentBuild.currentResult}",
+      repo: 'docker_app',
+      account: 'Rajdeep-coder',
+      credentialsId: 'github-token',  // must exactly match Jenkins credential ID
+      sha: env.GIT_COMMIT
+    )
 
     always {
       echo 'Cleaning up containers...'
