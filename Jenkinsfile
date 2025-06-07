@@ -34,10 +34,30 @@ pipeline {
       steps {
         dir('src') {
           sh '''
+            echo "Starting containers..."
             docker-compose up -d db redis app
+
+            echo "Current container status:"
+            docker-compose ps
+
             CONTAINER=$(docker-compose ps -q app)
-            echo "Running specs in container: $CONTAINER"
-            docker exec $CONTAINER bundle exec rspec
+            echo "App container ID: $CONTAINER"
+
+            echo "App container logs:"
+            docker logs $CONTAINER || true
+
+            STATUS=$(docker inspect -f '{{.State.Running}}' $CONTAINER)
+            echo "Is app container running? $STATUS"
+
+            if [ "$STATUS" = "true" ]; then
+              echo "Running specs inside the app container..."
+              docker exec $CONTAINER bundle exec rspec
+            else
+              echo "App container is not running, skipping specs run."
+              exit 1
+            fi
+
+            echo "Stopping containers..."
             docker-compose down
           '''
         }
