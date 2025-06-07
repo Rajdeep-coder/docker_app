@@ -1,3 +1,32 @@
+# services:
+#   db:
+#     image: postgres:15
+#     volumes:
+#       - db_data:/var/lib/postgresql/data
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: docker_app_development
+
+#   app:
+#     build: .
+#     command: bash entrypoint.sh
+#     volumes:
+#       - .:/app
+#       - /app/tmp:/app/tmp
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - db
+#     environment:
+#       DATABASE_URL: "postgres://postgres:password@db:5432/docker_app_development"
+
+# volumes:
+#   db_data:
+
+
+version: '3.8'
+
 services:
   db:
     image: postgres:15
@@ -7,6 +36,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: docker_app_development
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
 
   app:
     build: .
@@ -18,8 +52,22 @@ services:
       - "3000:3000"
     depends_on:
       - db
+      - redis
     environment:
       DATABASE_URL: "postgres://postgres:password@db:5432/docker_app_development"
+      REDIS_URL: "redis://redis:6379/0"
+
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: "postgres://postgres:password@db:5432/docker_app_development"
+      REDIS_URL: "redis://redis:6379/0"
 
 volumes:
   db_data:
