@@ -73,9 +73,10 @@ pipeline {
   }
 
   environment {
+    SRC_DIR = 'src'
     GITHUB_REPO = 'docker_app'
     GITHUB_ACCOUNT = 'Rajdeep-coder'
-    GITHUB_CREDENTIALS_ID = 'github-token'  // replace with your Jenkins GitHub PAT credential ID
+    GITHUB_CREDENTIALS_ID = 'github-token'
   }
 
   post {
