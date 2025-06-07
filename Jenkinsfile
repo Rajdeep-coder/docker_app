@@ -34,15 +34,26 @@ pipeline {
       steps {
         dir('src') {
           sh '''
-            PROJECT_NAME=src
+            echo "PWD: $PWD"
+            ls -la
+            docker-compose -p src config
+
             echo "Starting containers..."
-            docker-compose -p $PROJECT_NAME up -d db redis app
+            docker-compose -p src up -d db redis app
 
             echo "Current container status:"
-            docker-compose -p $PROJECT_NAME ps
+            docker-compose -p src ps
 
-            CONTAINER=$(docker-compose -p $PROJECT_NAME ps -q app)
+            echo "Container ID for app service:"
+            docker-compose -p src ps -q app
+
+            CONTAINER=$(docker-compose -p src ps -q app)
             echo "App container ID: $CONTAINER"
+
+            if [ -z "$CONTAINER" ]; then
+              echo "No container ID found for app service!"
+              exit 1
+            fi
 
             echo "App container logs:"
             docker logs $CONTAINER || true
@@ -59,7 +70,7 @@ pipeline {
             fi
 
             echo "Stopping containers..."
-            docker-compose -p $PROJECT_NAME down
+            # docker-compose -p src down
           '''
         }
       }
@@ -74,12 +85,12 @@ pipeline {
     }
   }
 
-  post {
-    always {
-      echo 'Cleaning up containers...'
-      dir('src') {
-        sh 'docker-compose down || true'
-      }
-    }
-  }
+  // post {
+  //   always {
+  //     echo 'Cleaning up containers...'
+  //     dir('src') {
+  //       sh 'docker-compose down || true'
+  //     }
+  //   }
+  // }
 }
