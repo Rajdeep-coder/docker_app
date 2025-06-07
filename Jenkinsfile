@@ -14,6 +14,9 @@ pipeline {
       steps {
         dir(env.SRC_DIR) {
           checkout scm
+          script {
+            echo "GIT_COMMIT = ${env.GIT_COMMIT}"
+          }
         }
       }
     }
