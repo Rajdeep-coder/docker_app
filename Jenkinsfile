@@ -42,6 +42,18 @@ pipeline {
       }
     }
 
+    stage('Debug Container Mount') {
+      steps {
+        dir('src') {
+          sh '''
+            echo "Listing /app inside container:"
+            docker-compose run --rm app ls -la /app
+          '''
+        }
+      }
+    }
+
+
     stage('Check App Logs') {
       steps {
         dir('src') {
