@@ -34,13 +34,14 @@ pipeline {
       steps {
         dir('src') {
           sh '''
+            PROJECT_NAME=src
             echo "Starting containers..."
-            docker-compose up -d db redis app
+            docker-compose -p $PROJECT_NAME up -d db redis app
 
             echo "Current container status:"
-            docker-compose ps
+            docker-compose -p $PROJECT_NAME ps
 
-            CONTAINER=$(docker-compose ps -q app)
+            CONTAINER=$(docker-compose -p $PROJECT_NAME ps -q app)
             echo "App container ID: $CONTAINER"
 
             echo "App container logs:"
@@ -58,7 +59,7 @@ pipeline {
             fi
 
             echo "Stopping containers..."
-            docker-compose down
+            docker-compose -p $PROJECT_NAME down
           '''
         }
       }
