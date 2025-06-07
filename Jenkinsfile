@@ -15,12 +15,12 @@ pipeline {
       }
     }
 
-    stage('Run Tests') {
-      steps {
-        // Optional: Run tests here, if you have any
-        // sh 'docker-compose exec app bundle exec rspec'
-      }
-    }
+    // stage('Run Tests') {
+    //   steps {
+    //     // Optional: Run tests here, if you have any
+    //     // sh 'docker-compose exec app bundle exec rspec'
+    //   }
+    // }
 
     stage('Stop Containers') {
       steps {
