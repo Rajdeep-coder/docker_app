@@ -8,7 +8,9 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/Rajdeep-coder/docker_app.git'
+        dir("${env.WORKSPACE}") {
+          git 'https://github.com/Rajdeep-coder/docker_app.git'
+        }
       }
     }
 
