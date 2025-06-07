@@ -14,10 +14,22 @@ pipeline {
       }
     }
 
+    stage('Fix Line Endings & Permissions') {
+      steps {
+        dir('src') {
+          // Remove CRLFs and ensure the script is executable
+          sh "tr -d '\\r' < entrypoint.sh > fixed.sh && mv fixed.sh entrypoint.sh"
+          sh "chmod +x entrypoint.sh"
+        }
+      }
+    }
+
     stage('Debug Workspace') {
       steps {
-        sh 'pwd'
-        sh 'ls -la'
+        dir('src') {
+          sh 'pwd'
+          sh 'ls -la'
+        }
       }
     }
 
@@ -35,42 +47,7 @@ pipeline {
         dir('src') {
           sh '''
             echo "PWD: $PWD"
-            ls -la
-            docker-compose -p src config
-
-            echo "Starting containers..."
-            docker-compose -p src up -d db redis app
-
-            echo "Current container status:"
-            docker-compose -p src ps
-
-            echo "Container ID for app service:"
-            docker-compose -p src ps -q app
-
-            CONTAINER=$(docker-compose -p src ps -q app)
-            echo "App container ID: $CONTAINER"
-
-            if [ -z "$CONTAINER" ]; then
-              echo "No container ID found for app service!"
-              exit 1
-            fi
-
-            echo "App container logs:"
-            docker logs $CONTAINER || true
-
-            STATUS=$(docker inspect -f '{{.State.Running}}' $CONTAINER)
-            echo "Is app container running? $STATUS"
-
-            if [ "$STATUS" = "true" ]; then
-              echo "Running specs inside the app container..."
-              docker exec $CONTAINER bundle exec rspec
-            else
-              echo "App container is not running, skipping specs run."
-              exit 1
-            fi
-
-            echo "Stopping containers..."
-            # docker-compose -p src down
+            docker-compose run --rm app bundle exec rspec
           '''
         }
       }
@@ -85,12 +62,12 @@ pipeline {
     }
   }
 
-  // post {
-  //   always {
-  //     echo 'Cleaning up containers...'
-  //     dir('src') {
-  //       sh 'docker-compose down || true'
-  //     }
-  //   }
-  // }
+  post {
+    always {
+      echo 'Cleaning up containers...'
+      dir('src') {
+        sh 'docker-compose down || true'
+      }
+    }
+  }
 }
