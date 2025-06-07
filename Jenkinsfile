@@ -17,7 +17,7 @@ pipeline {
     stage('Fix Line Endings & Permissions') {
       steps {
         dir('src') {
-          // Remove CRLFs and ensure the script is executable
+          // Remove CRLFs and make script executable
           sh "tr -d '\\r' < entrypoint.sh > fixed.sh && mv fixed.sh entrypoint.sh"
           sh "chmod +x entrypoint.sh"
         }
@@ -36,8 +36,19 @@ pipeline {
     stage('Build and Start Containers') {
       steps {
         dir('src') {
-          sh 'docker-compose build'
+          sh 'docker-compose build --no-cache'
           sh 'docker-compose up -d'
+        }
+      }
+    }
+
+    stage('Check App Logs') {
+      steps {
+        dir('src') {
+          sh '''
+            echo "Checking app logs (last 50 lines)..."
+            docker-compose logs app | tail -n 50 || true
+          '''
         }
       }
     }
@@ -46,8 +57,8 @@ pipeline {
       steps {
         dir('src') {
           sh '''
-            echo "PWD: $PWD"
-            docker-compose run --rm app bundle exec rspec
+            echo "Running specs..."
+            docker-compose run --rm -v "$PWD:/app" app bundle exec rspec
           '''
         }
       }
