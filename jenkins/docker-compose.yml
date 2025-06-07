@@ -5,10 +5,20 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    user: root  # 👈 this gives Jenkins root privileges inside the container
+    user: root
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock  # Access host Docker
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    environment:
+      - NGROK_AUTHTOKEN=25xtYiUX31RivZ7g2wCErZrmqrb_2XT79jUEx5Dg9BRMC6FC6
+    command: ["http", "--url=cosmic-colt-learning.ngrok-free.app", "jenkins:8080"]
+    ports:
+      - "4040:4040"  # ngrok web UI port (optional)
+    depends_on:
+      - jenkins
 
 volumes:
   jenkins_home:

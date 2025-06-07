@@ -23,6 +23,21 @@ pipeline {
       }
     }
 
+    stage('Run Specs') {
+      steps {
+        dir('src') {
+          // Ensure services like DB and Redis are up
+          sh 'docker-compose up -d db redis'
+
+          // Run rspec in app container
+          sh 'docker-compose run --rm app bundle exec rspec'
+
+          // Optionally: show logs if needed
+          // sh 'docker-compose logs app'
+        }
+      }
+    }
+
     stage('Stop Containers') {
       steps {
         dir('src') {
