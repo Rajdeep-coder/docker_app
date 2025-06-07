@@ -81,7 +81,7 @@ pipeline {
         repo: 'docker_app',
         account: 'Rajdeep-coder',
         credentialsId: 'github-token',
-        sha: env.GIT_COMMIT
+        sha: "${env.GIT_COMMIT}"
       )
     }
     failure {
@@ -92,7 +92,7 @@ pipeline {
         repo: 'docker_app',
         account: 'Rajdeep-coder',
         credentialsId: 'github-token',
-        sha: env.GIT_COMMIT
+        sha: "${env.GIT_COMMIT}"
       )
     }
 
