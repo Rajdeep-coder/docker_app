@@ -18,16 +18,6 @@ pipeline {
       }
     }
 
-    stage('Fix Line Endings & Permissions') {
-      steps {
-        dir(env.SRC_DIR) {
-          // Fix Windows CRLFs, make entrypoint.sh executable
-          sed -i 's/\r$//' entrypoint.sh
-          sh "chmod +x entrypoint.sh"
-        }
-      }
-    }
-
     stage('Debug Workspace') {
       steps {
         dir(env.SRC_DIR) {
