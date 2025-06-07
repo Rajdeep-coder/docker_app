@@ -33,7 +33,10 @@ pipeline {
     stage('Run Specs') {
       steps {
         dir('src') {
-          sh 'docker-compose run --rm app bundle exec rspec'
+          sh '''
+            export APP_PATH="$PWD"
+            docker-compose run --rm -v "$APP_PATH:/app" app bundle exec rspec
+          '''
         }
       }
     }
