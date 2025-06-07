@@ -76,18 +76,6 @@ pipeline {
     }
   }
 
-  steps {
-    script {
-      def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
-        com.cloudbees.plugins.credentials.common.StandardCredentials.class,
-        Jenkins.instance,
-        null,
-        null
-      )
-      creds.each { println "Credential ID: ${it.id}" }
-    }
-  }
-
   post {
     success {
       githubNotify(
